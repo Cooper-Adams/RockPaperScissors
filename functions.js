@@ -126,11 +126,11 @@ function rockPaperScissors(playerSel, computerSel)
 //buttons are clicked by the player. It will allow the player to
 //play up to 5 times, and will pit the players choice against a 
 //random selection of the computer, and will report the winner of 
-//the round, and then the game once 5 games have been played.
+//the round, and then the game once 5 games have been won.
 function game(e)
 {
-    //If max number of games has been played, function terminates.
-    if (gamesPlayed == 5)
+    //If max number of games has been won, function terminates.
+    if (userScore == 5 || compScore == 5)
     {
         return;
     }
@@ -151,42 +151,29 @@ function game(e)
     if (winVal == 0)
     {
         userScore++;
-        gamesPlayed++;
     }
 
     else if (winVal == 1)
     {
         compScore++;
-        gamesPlayed++;
-    }
-
-    else
-    {
-        gamesPlayed++;
     }
 
     output(userScore, compScore);
 
     //Checks if the max games have been played and reports win, loss, or
     //tie depending on the scores.
-    if (gamesPlayed == 5)
+    if (userScore == 5 || compScore == 5)
     {
         //Player wins
-        if (userScore > compScore)
+        if (userScore == 5)
         {
-            gameResult.innerHTML = gameResult.textContent + "<br>You won the 5 round match! Refresh the page to play again.";
+            gameResult.innerHTML = gameResult.textContent + "<br>You won! Refresh the page to play again.";
         }
 
         //Computer wins
-        else if (compScore > userScore)
+        else if (compScore == 5)
         {
-            gameResult.innerHTML = gameResult.textContent + "<br>You lost the 5 round match! Refresh the page to play again.";
-        }
-
-        //Player and computer tie
-        else
-        {
-            gameResult.innerHTML = gameResult.textContent + "<br>The five round match ends in a tie! Refresh the page to play again.";
+            gameResult.innerHTML = gameResult.textContent + "<br>You lost! Refresh the page to play again.";
         }
 
         //End game function
