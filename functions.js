@@ -1,5 +1,27 @@
-let pc = "null";
-let cc = "null";
+//Global Score variables so they can be updated whenever a user plays.
+let userScore = 0;
+let compScore = 0;
+let gamesPlayed = 0;
+
+//Instantiates and reports the scoreboard before a game is played.
+const score = document.querySelector('#scoreBoard');
+score.textContent = 'User Score: 0, Computer Score: 0';
+
+//Instantiates the game result text element above the scoreboard,
+//but it is not visible until a game has been played.
+const gameResult = document.createElement('p');
+document.body.insertBefore(gameResult, scoreBoard);
+
+//Adds an event listener to the rock, paper, and scissors buttons
+const btns = Array.from(document.querySelectorAll('.button'));
+btns.forEach(btn => btn.addEventListener('click', game));
+
+//The scoreboard function. This updates the score.textContent so as to
+//keep track of who is winning/losing.
+function output(hScore, cScore) 
+{
+    score.textContent = 'User Score: ' + hScore + ', Computer Score: ' + cScore ;
+}
 
 //Function that chooses a random number between 0 and 2,
 //where 0 is rock, 1 is paper, and 2 is scissors, then
@@ -7,123 +29,172 @@ let cc = "null";
 function computerPlay(){
     let num = getRandomInt(3);
 
+    //Computer chooses rock
     if (num === 0)
     {
         return "Rock";
     }
 
+    //Computer chooses paper
     else if (num === 1)
     {
         return "Paper";
     }
 
+    //Computer chooses scissors
     else {
         return "Scissors";
     }
 }
 
-function playerPlay()
+//Passes the button that the user clicks and returns their choice.
+function playerPlay(button)
 {
-    while(true)
+    //Player clicks rock button
+    if (button.target.id == 'btn1')
     {
-        let input = prompt("Please enter Rock, Paper, or Scissors.")
+        return 'Rock';
+    }
 
-        if (input.toLowerCase() == "rock" || input.toLowerCase() == "paper" || input.toLowerCase() == "scissors")
-        {
-            return input.charAt(0).toUpperCase() + input.slice(1);
-        }
+    //Player clicks paper button
+    else if (button.target.id == 'btn2')
+    {
+        return 'Paper';
+    }
 
-        else
-        {
-            alert("You must enter rock, paper, or scissors (case insensitive).")
-        }
+    //Player clicks scissors button
+    else if (button.target.id == 'btn3')
+    {
+        return 'Scissors';
     }
 }
 
+//Compares player and user choice, and returns the winner.
 function rockPaperScissors(playerSel, computerSel)
 {
+    //Result of a tie
     if (playerSel == computerSel)
     {
-        console.log(playerSel + " versus " + computerSel + ". It's a tie!");
+        gameResult.textContent = playerSel + " versus " + computerSel + ". It's a tie!";
         return 2;
     }
 
+    //Player wins with rock
     else if (playerSel == "Rock" && computerSel == "Scissors")
     {
-        console.log("Rock beats scissors. You win!");
+        gameResult.textContent = "Rock beats scissors. You win!";
         return 0;
     }
 
+    //Player wins with paper
     else if (playerSel == "Paper" && computerSel == "Rock")
     {
-        console.log("Paper beats rock. You win!");
+        gameResult.textContent = "Paper beats rock. You win!";
         return 0;
     }
 
+    //Player wins with scissors
     else if (playerSel == "Scissors" && computerSel == "Paper")
     {
-        console.log("Scissors beats paper. You win!");
+        gameResult.textContent = "Scissors beats paper. You win!";
         return 0;
     }
 
+    //Computer wins with paper
     else if (playerSel == "Rock" && computerSel == "Paper")
     {
-        console.log("Paper beats rock. You lose!");
+        gameResult.textContent = "Paper beats rock. You lose!";
         return 1;
     }
 
+    //Computer wins with scissors
     else if (playerSel == "Paper" && computerSel == "Scissors")
     {
-        console.log("Scissors beats paper. You lose!");
+        gameResult.textContent = "Scissors beats paper. You lose!";
         return 1;
     }
 
+    //Computer wins with rock
     else if (playerSel == "Scissors" && computerSel == "Rock")
     {
-        console.log("Rock beats scissors. You lose!");
+        gameResult.textContent = "Rock beats scissors. You lose!";
         return 1;
     }
 }
 
-function game()
+//Function that is called when one of the rock, paper, or scissors
+//buttons are clicked by the player. It will allow the player to
+//play up to 5 times, and will pit the players choice against a 
+//random selection of the computer, and will report the winner of 
+//the round, and then the game once 5 games have been played.
+function game(e)
 {
-    let us = 0;
-    let cs = 0;
-    let winVal = 0;
-
-    for (let i = 0; i < 5; ++i)
+    //If max number of games has been played, function terminates.
+    if (gamesPlayed == 5)
     {
-        pc = playerPlay();
-        cc = computerPlay();
-
-        winVal = rockPaperScissors(pc, cc);
-
-        if (winVal == 0)
-        {
-            us++;
-        }
-
-        else if (winVal == 1)
-        {
-            cs++;
-        }
-    }
-
-    console.log("You: " + us + ", Computer: " + cs)
-
-    if (us > cs)
-    {
-        console.log("You won the 5 round match!")
         return;
     }
 
-    else 
+    //Game variables
+    let playerChoice = "null";
+    let computerChoice = "null";
+    let winVal = 0;
+
+    //Gets the player and computer choices
+    playerChoice = playerPlay(e);
+    computerChoice = computerPlay();
+
+    //Gets the result between the computer and player's choices
+    winVal = rockPaperScissors(playerChoice, computerChoice);
+
+    //Adds to score and or games played depending on the result of winVal
+    if (winVal == 0)
     {
-        console.log("You lost the 5 round match!")
+        userScore++;
+        gamesPlayed++;
+    }
+
+    else if (winVal == 1)
+    {
+        compScore++;
+        gamesPlayed++;
+    }
+
+    else
+    {
+        gamesPlayed++;
+    }
+
+    output(userScore, compScore);
+
+    //Checks if the max games have been played and reports win, loss, or
+    //tie depending on the scores.
+    if (gamesPlayed == 5)
+    {
+        //Player wins
+        if (userScore > compScore)
+        {
+            gameResult.innerHTML = gameResult.textContent + "<br>You won the 5 round match! Refresh the page to play again.";
+        }
+
+        //Computer wins
+        else if (compScore > userScore)
+        {
+            gameResult.innerHTML = gameResult.textContent + "<br>You lost the 5 round match! Refresh the page to play again.";
+        }
+
+        //Player and computer tie
+        else
+        {
+            gameResult.innerHTML = gameResult.textContent + "<br>The five round match ends in a tie! Refresh the page to play again.";
+        }
+
+        //End game function
         return;
     }
 }
 
+//Function to get a random number between 0 and max (non-inclusive)
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
